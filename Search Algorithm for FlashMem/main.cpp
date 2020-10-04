@@ -5,13 +5,13 @@
 #include <math.h>
 #include <stdint.h>
 
-#define EMPTY true
-#define NOT_EMPTY false
+#define EMPTY 0
+#define NOT_EMPTY 1
 #define SEARCH_FAIL -1
-
-#define TEST_PASSES 100 //테스트 횟수(1 이상)
 #define BLOCK_PER_SECTOR 32
 #define INIT_VALUE INT8_MAX
+
+#define TEST_PASSES 200 //테스트 횟수(1 이상)
 
 /***
 * 1) 0~31의 범위를 가진 배열 == 블록 하나의 섹터(페이지) 수
@@ -22,7 +22,7 @@
 * 5) 배열의 랜덤한 인덱스 위치까지 기록되어 있다고 가정하여 테스트 횟수만큼 반복 수행
 ***/
 
-bool* block = NULL;
+int* block = NULL;
 int flash_read_count = 0;
 int rand_index = 0;
 
@@ -30,10 +30,10 @@ std::random_device rd; //non-deterministic generator
 std::mt19937 gen(rd()); //to seed mersenne twister
 std::uniform_int_distribution<int> distribution(0, BLOCK_PER_SECTOR - 1); //0~31
 
-void set_block(bool*& block, int& rand_index)
+void set_block(int*& block, int& rand_index)
 {	
 	if(block == NULL)
-		block = new bool[BLOCK_PER_SECTOR];
+		block = new int[BLOCK_PER_SECTOR];
 
 	for (int i = 0; i < BLOCK_PER_SECTOR; i++)
 		block[i] = EMPTY;
@@ -44,25 +44,23 @@ void set_block(bool*& block, int& rand_index)
 	block[rand_index] = NOT_EMPTY; //해당 위치는 기록된 위치
 	for (int i = rand_index; i >= 0; i--) //이전 위치들 모두 기록된 위치로 변경
 		block[i] = NOT_EMPTY;
-
 }
 
-void print_block(bool*& block)
+void print_block(int*& block)
 {
 	for (int i = 0; i < BLOCK_PER_SECTOR; i++)
 	{
 		printf("Offset %d : ", i);
-		printf(block[i] ? "EMPTY\n" : "NOT_EMPTY\n");
+		printf(block[i] ? "NOT_EMPTY\n" : "EMPTY\n"); //1, 0
 	}
 }
 
-int binary_search_for_empty_page(bool*& block, int& flash_read_count) //이진탐색 변형
+int binary_search_for_empty_page(int*& block, int& flash_read_count) //이진탐색
 {
-	//빈 페이지 위치를 찾아서 반환
-	
 	int low = 0;
 	int high = BLOCK_PER_SECTOR -1;
-	int mid = round((low+high) / 2);
+	int mid = 0;
+
 	int current_empty_index = INIT_VALUE;
 
 	while (low<=high) {
@@ -90,7 +88,43 @@ int binary_search_for_empty_page(bool*& block, int& flash_read_count) //이진탐색
 	return SEARCH_FAIL;
 }
 
-int seq_search_for_empty_page(bool*& block, int& flash_read_count) //순차탐색
+int wearlevel_binary_search_for_empty_page(int*& block, int& flash_read_count) //이진탐색 변형
+{
+	//Wear-leveling을 위해 초기 mid값을 랜덤한 값으로 지정
+
+	int low = 0;
+	int high = BLOCK_PER_SECTOR - 1;
+	int mid = distribution(gen);
+
+	int current_empty_index = INIT_VALUE;
+
+	while (low <= high) {
+		flash_read_count++;
+
+		if (block[mid] == EMPTY) //비어있으면
+		{
+			//왼쪽으로 탐색
+			current_empty_index = mid;
+			high = mid - 1;
+		}
+		else //비어있지 않으면
+		{
+			//왼쪽은 모두 비어있지 않음
+			//오른쪽으로 탐색
+			low = mid + 1;
+		}
+
+		mid = (low + high) / 2;
+	}
+
+	if (current_empty_index != INIT_VALUE)
+		return current_empty_index;
+
+	return SEARCH_FAIL;
+}
+
+
+int seq_search_for_empty_page(int*& block, int& flash_read_count) //순차탐색
 {
 	for (int i = 0; i < BLOCK_PER_SECTOR; i++)
 	{
@@ -103,7 +137,6 @@ int seq_search_for_empty_page(bool*& block, int& flash_read_count) //순차탐색
 	return SEARCH_FAIL;
 }
 
-
 void main()
 {
 	int result_empty_page = SEARCH_FAIL;
@@ -114,8 +147,9 @@ void main()
 		set_block(block, rand_index);
 		print_block(block);
 
-		//result_empty_page = seq_search_for_empty_page(block, flash_read_count);
-		result_empty_page = binary_search_for_empty_page(block, flash_read_count);
+		//result_empty_page = seq_search_for_empty_page(block, flash_read_count); //순차 탐색
+		//result_empty_page = binary_search_for_empty_page(block, flash_read_count); //이진 탐색
+		result_empty_page = wearlevel_binary_search_for_empty_page(block, flash_read_count); //Wear-leveling을 위해 초기 mid를 랜덤하게 주고 이진 탐색
 
 		if (result_empty_page != SEARCH_FAIL)
 		{
@@ -124,8 +158,21 @@ void main()
 			printf("flash_read_count : %d\n", flash_read_count);
 			printf("--------------------------------------------------\n");
 		}
+		/*
+		else
+		{
+			printf("--------------------------------------------------\n");
+			printf("No Empty Page in block\n");
+			printf("Current rand_index : %d\n", rand_index);
+			printf("Current Passes : %d\n", i);
+			printf("--------------------------------------------------\n");
+			system("pause");
+		}
+		*/
+
 		average_flash_read_count += flash_read_count;
 		flash_read_count = 0;
+		result_empty_page = SEARCH_FAIL;
 	}
 	average_flash_read_count /= TEST_PASSES;
 
