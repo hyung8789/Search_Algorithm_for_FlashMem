@@ -174,11 +174,12 @@ void main()
 		flash_read_count = 0;
 		result_empty_page = SEARCH_FAIL;
 	}
-	average_flash_read_count /= TEST_PASSES;
+	//average_flash_read_count /= TEST_PASSES;
 
 	printf("--------------------------------------------------\n");
 	printf("Test Passes : %d\n", TEST_PASSES);
-	printf("Average flash_read_count : %d\n", average_flash_read_count);
+	printf("Total flash_read_count : %d\n", average_flash_read_count);
+	printf("Average flash_read_count : %d\n", average_flash_read_count / TEST_PASSES);
 	printf("--------------------------------------------------\n");
 
 	system("pause");
