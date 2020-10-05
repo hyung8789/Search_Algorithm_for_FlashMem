@@ -140,7 +140,7 @@ int seq_search_for_empty_page(int*& block, int& flash_read_count) //¼øÂ÷Å½»ö
 void main()
 {
 	int result_empty_page = SEARCH_FAIL;
-	int average_flash_read_count = 0;
+	int total_flash_read_count = 0;
 	
 	for (int i = 0; i < TEST_PASSES; i++)
 	{
@@ -170,16 +170,15 @@ void main()
 		}
 		*/
 
-		average_flash_read_count += flash_read_count;
+		total_flash_read_count += flash_read_count;
 		flash_read_count = 0;
 		result_empty_page = SEARCH_FAIL;
 	}
-	//average_flash_read_count /= TEST_PASSES;
-
+	
 	printf("--------------------------------------------------\n");
 	printf("Test Passes : %d\n", TEST_PASSES);
-	printf("Total flash_read_count : %d\n", average_flash_read_count);
-	printf("Average flash_read_count : %d\n", average_flash_read_count / TEST_PASSES);
+	printf("Total flash_read_count : %d\n", total_flash_read_count);
+	printf("Average flash_read_count : %d\n", total_flash_read_count / TEST_PASSES);
 	printf("--------------------------------------------------\n");
 
 	system("pause");
