@@ -11,15 +11,15 @@
 #define BLOCK_PER_SECTOR 32
 #define INIT_VALUE INT8_MAX
 
-#define TEST_PASSES 200 //Å×½ºÆ® È½¼ö(1 ÀÌ»ó)
+#define TEST_PASSES 200 //í…ŒìŠ¤íŠ¸ íšŸìˆ˜(1 ì´ìƒ)
 
 /***
-* 1) 0~31ÀÇ ¹üÀ§¸¦ °¡Áø ¹è¿­ == ºí·Ï ÇÏ³ªÀÇ ¼½ÅÍ(ÆäÀÌÁö) ¼ö
-* 2) ÇØ´ç ¹è¿­Àº ÇÃ·¡½Ã ¸Ş¸ğ¸®ÀÇ ÆäÀÌÁö ´ÜÀ§ ¸ÅÇÎÀ» »ç¿ëÇÒ °æ¿ì, Ç×»ó ¼øÂ÷ÀûÀ¸·Î ºó ÆäÀÌÁöºÎÅÍ ±â·ÏµÇ´Â Æ¯¼ºÀ» µû¸¥´Ù.
-* 2) ÇØ´ç ¹è¿­¿¡¼­ ¾î¶² ÀÎµ¦½º À§Ä¡ÀÇ ÀÚ¸®°¡ ºñ¾îÀÖÁö¾ÊÀ» °æ¿ì(false), ±× ÀÌÀü ÀÎµ¦½º À§Ä¡µéÀº ¸ğµÎ ºñ¾îÀÖÁö ¾Ê´Ù.
-* 3) ÇØ´ç ¹è¿­¿¡¼­ ¾î¶² ÀÎµ¦½º À§Ä¡ÀÇ ÀÚ¸®°¡ ºñ¾îÀÖÀ» °æ¿ì(true), ±× ÀÌÀü ÀÎµ¦½º À§Ä¡µéÀº ºñ¾îÀÖ°Å³ª ºñ¾îÀÖÁö ¾ÊÀ» ¼ö ÀÖ´Ù.
-* 4) ÀÌÁøÅ½»ö ¾Ë°í¸®ÁòÀÇ ºĞÇÒ Á¤º¹ Å½»ö ±â¹ı¿¡ ÀÇÇÑ ºó ¼½ÅÍ(ÆäÀÌÁö)¸¦ Ã£´Â ¹æ¹ı°ú ¼øÂ÷ÀûÀ¸·Î ºó ¼½ÅÍ(ÆäÀÌÁö)¸¦ Ã£´Â ¹æ¹ıÀ» ºñ±³
-* 5) ¹è¿­ÀÇ ·£´ıÇÑ ÀÎµ¦½º À§Ä¡±îÁö ±â·ÏµÇ¾î ÀÖ´Ù°í °¡Á¤ÇÏ¿© Å×½ºÆ® È½¼ö¸¸Å­ ¹İº¹ ¼öÇà
+* 1) 0~31ì˜ ë²”ìœ„ë¥¼ ê°€ì§„ ë°°ì—´ == ë¸”ë¡ í•˜ë‚˜ì˜ ì„¹í„°(í˜ì´ì§€) ìˆ˜
+* 2) í•´ë‹¹ ë°°ì—´ì€ í”Œë˜ì‹œ ë©”ëª¨ë¦¬ì˜ í˜ì´ì§€ ë‹¨ìœ„ ë§¤í•‘ì„ ì‚¬ìš©í•  ê²½ìš°, í•­ìƒ ìˆœì°¨ì ìœ¼ë¡œ ë¹ˆ í˜ì´ì§€ë¶€í„° ê¸°ë¡ë˜ëŠ” íŠ¹ì„±ì„ ë”°ë¥¸ë‹¤.
+* 2) í•´ë‹¹ ë°°ì—´ì—ì„œ ì–´ë–¤ ì¸ë±ìŠ¤ ìœ„ì¹˜ì˜ ìë¦¬ê°€ ë¹„ì–´ìˆì§€ì•Šì„ ê²½ìš°(NOT_EMPTY), ê·¸ ì´ì „ ì¸ë±ìŠ¤ ìœ„ì¹˜ë“¤ì€ ëª¨ë‘ ë¹„ì–´ìˆì§€ ì•Šë‹¤.
+* 3) í•´ë‹¹ ë°°ì—´ì—ì„œ ì–´ë–¤ ì¸ë±ìŠ¤ ìœ„ì¹˜ì˜ ìë¦¬ê°€ ë¹„ì–´ìˆì„ ê²½ìš°(EMPTY), ê·¸ ì´ì „ ì¸ë±ìŠ¤ ìœ„ì¹˜ë“¤ì€ ë¹„ì–´ìˆê±°ë‚˜ ë¹„ì–´ìˆì§€ ì•Šì„ ìˆ˜ ìˆë‹¤.
+* 4) ì´ì§„íƒìƒ‰ ì•Œê³ ë¦¬ì¦˜ì˜ ë¶„í•  ì •ë³µ íƒìƒ‰ ê¸°ë²•ì— ì˜í•œ ë¹ˆ ì„¹í„°(í˜ì´ì§€)ë¥¼ ì°¾ëŠ” ë°©ë²•ê³¼ ìˆœì°¨ì ìœ¼ë¡œ ë¹ˆ ì„¹í„°(í˜ì´ì§€)ë¥¼ ì°¾ëŠ” ë°©ë²•ì„ ë¹„êµ
+* 5) ë°°ì—´ì˜ ëœë¤í•œ ì¸ë±ìŠ¤ ìœ„ì¹˜ê¹Œì§€ ê¸°ë¡ë˜ì–´ ìˆë‹¤ê³  ê°€ì •í•˜ì—¬ í…ŒìŠ¤íŠ¸ íšŸìˆ˜ë§Œí¼ ë°˜ë³µ ìˆ˜í–‰
 ***/
 
 int* block = NULL;
@@ -38,11 +38,11 @@ void set_block(int*& block, int& rand_index)
 	for (int i = 0; i < BLOCK_PER_SECTOR; i++)
 		block[i] = EMPTY;
 
-	//·£´ıÇÑ ÀÎµ¦½º À§Ä¡±îÁö ±â·ÏµÇ¾î ÀÖ´Ù°í °¡Á¤
+	//ëœë¤í•œ ì¸ë±ìŠ¤ ìœ„ì¹˜ê¹Œì§€ ê¸°ë¡ë˜ì–´ ìˆë‹¤ê³  ê°€ì •
 	rand_index = distribution(gen);
 
-	block[rand_index] = NOT_EMPTY; //ÇØ´ç À§Ä¡´Â ±â·ÏµÈ À§Ä¡
-	for (int i = rand_index; i >= 0; i--) //ÀÌÀü À§Ä¡µé ¸ğµÎ ±â·ÏµÈ À§Ä¡·Î º¯°æ
+	block[rand_index] = NOT_EMPTY; //í•´ë‹¹ ìœ„ì¹˜ëŠ” ê¸°ë¡ëœ ìœ„ì¹˜
+	for (int i = rand_index; i >= 0; i--) //ì´ì „ ìœ„ì¹˜ë“¤ ëª¨ë‘ ê¸°ë¡ëœ ìœ„ì¹˜ë¡œ ë³€ê²½
 		block[i] = NOT_EMPTY;
 }
 
@@ -55,7 +55,7 @@ void print_block(int*& block)
 	}
 }
 
-int binary_search_for_empty_page(int*& block, int& flash_read_count) //ÀÌÁøÅ½»ö
+int binary_search_for_empty_page(int*& block, int& flash_read_count) //ì´ì§„íƒìƒ‰
 {
 	int low = 0;
 	int high = BLOCK_PER_SECTOR -1;
@@ -68,16 +68,16 @@ int binary_search_for_empty_page(int*& block, int& flash_read_count) //ÀÌÁøÅ½»ö
 
 		mid = (low + high) / 2;
 
-		if (block[mid] == EMPTY) //ºñ¾îÀÖÀ¸¸é
+		if (block[mid] == EMPTY) //ë¹„ì–´ìˆìœ¼ë©´
 		{
-			//¿ŞÂÊÀ¸·Î Å½»ö
+			//ì™¼ìª½ìœ¼ë¡œ íƒìƒ‰
 			current_empty_index = mid;
 			high = mid-1;
 		}
-		else //ºñ¾îÀÖÁö ¾ÊÀ¸¸é
+		else //ë¹„ì–´ìˆì§€ ì•Šìœ¼ë©´
 		{
-			//¿ŞÂÊÀº ¸ğµÎ ºñ¾îÀÖÁö ¾ÊÀ½
-			//¿À¸¥ÂÊÀ¸·Î Å½»ö
+			//ì™¼ìª½ì€ ëª¨ë‘ ë¹„ì–´ìˆì§€ ì•ŠìŒ
+			//ì˜¤ë¥¸ìª½ìœ¼ë¡œ íƒìƒ‰
 			low = mid+1;
 		}
 	}
@@ -88,9 +88,9 @@ int binary_search_for_empty_page(int*& block, int& flash_read_count) //ÀÌÁøÅ½»ö
 	return SEARCH_FAIL;
 }
 
-int wearlevel_binary_search_for_empty_page(int*& block, int& flash_read_count) //ÀÌÁøÅ½»ö º¯Çü
+int wearlevel_binary_search_for_empty_page(int*& block, int& flash_read_count) //ì´ì§„íƒìƒ‰ ë³€í˜•
 {
-	//Wear-levelingÀ» À§ÇØ ÃÊ±â mid°ªÀ» ·£´ıÇÑ °ªÀ¸·Î ÁöÁ¤
+	//Wear-levelingì„ ìœ„í•´ ì´ˆê¸° midê°’ì„ ëœë¤í•œ ê°’ìœ¼ë¡œ ì§€ì •
 
 	int low = 0;
 	int high = BLOCK_PER_SECTOR - 1;
@@ -101,16 +101,16 @@ int wearlevel_binary_search_for_empty_page(int*& block, int& flash_read_count) /
 	while (low <= high) {
 		flash_read_count++;
 
-		if (block[mid] == EMPTY) //ºñ¾îÀÖÀ¸¸é
+		if (block[mid] == EMPTY) //ë¹„ì–´ìˆìœ¼ë©´
 		{
-			//¿ŞÂÊÀ¸·Î Å½»ö
+			//ì™¼ìª½ìœ¼ë¡œ íƒìƒ‰
 			current_empty_index = mid;
 			high = mid - 1;
 		}
-		else //ºñ¾îÀÖÁö ¾ÊÀ¸¸é
+		else //ë¹„ì–´ìˆì§€ ì•Šìœ¼ë©´
 		{
-			//¿ŞÂÊÀº ¸ğµÎ ºñ¾îÀÖÁö ¾ÊÀ½
-			//¿À¸¥ÂÊÀ¸·Î Å½»ö
+			//ì™¼ìª½ì€ ëª¨ë‘ ë¹„ì–´ìˆì§€ ì•ŠìŒ
+			//ì˜¤ë¥¸ìª½ìœ¼ë¡œ íƒìƒ‰
 			low = mid + 1;
 		}
 
@@ -124,7 +124,7 @@ int wearlevel_binary_search_for_empty_page(int*& block, int& flash_read_count) /
 }
 
 
-int seq_search_for_empty_page(int*& block, int& flash_read_count) //¼øÂ÷Å½»ö
+int seq_search_for_empty_page(int*& block, int& flash_read_count) //ìˆœì°¨íƒìƒ‰
 {
 	for (int i = 0; i < BLOCK_PER_SECTOR; i++)
 	{
@@ -147,9 +147,9 @@ void main()
 		set_block(block, rand_index);
 		print_block(block);
 
-		//result_empty_page = seq_search_for_empty_page(block, flash_read_count); //¼øÂ÷ Å½»ö
-		//result_empty_page = binary_search_for_empty_page(block, flash_read_count); //ÀÌÁø Å½»ö
-		result_empty_page = wearlevel_binary_search_for_empty_page(block, flash_read_count); //Wear-levelingÀ» À§ÇØ ÃÊ±â mid¸¦ ·£´ıÇÏ°Ô ÁÖ°í ÀÌÁø Å½»ö
+		//result_empty_page = seq_search_for_empty_page(block, flash_read_count); //ìˆœì°¨ íƒìƒ‰
+		//result_empty_page = binary_search_for_empty_page(block, flash_read_count); //ì´ì§„ íƒìƒ‰
+		result_empty_page = wearlevel_binary_search_for_empty_page(block, flash_read_count); //Wear-levelingì„ ìœ„í•´ ì´ˆê¸° midë¥¼ ëœë¤í•˜ê²Œ ì£¼ê³  ì´ì§„ íƒìƒ‰
 
 		if (result_empty_page != SEARCH_FAIL)
 		{
